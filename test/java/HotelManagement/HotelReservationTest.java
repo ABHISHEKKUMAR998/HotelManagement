@@ -18,14 +18,14 @@ public class HotelReservationTest {
 
 		hotelReservationObject.printHotels();
 	}
-	@Test
-	public void whenFindCheapestHotelMethodCalled_shouldReturn_nameOfHotel() {
-		HotelReservation hotelReservation = new HotelReservation();
-		assertTrue(hotelReservation.addHotel("Lakewood", 110));
-		assertTrue(hotelReservation.addHotel("Bridgewood", 160));
-		assertTrue(hotelReservation.addHotel("Ridgewood", 220));
-		assertEquals("Lakewood", hotelReservation.findCheapestHotel("10Sep2020", "11Sep2020"));
-	}
+//	@Test
+//	public void whenFindCheapestHotelMethodCalled_shouldReturn_nameOfHotel() {
+//		HotelReservation hotelReservation = new HotelReservation();
+//		assertTrue(hotelReservation.addHotel("Lakewood", 110));
+//		assertTrue(hotelReservation.addHotel("Bridgewood", 160));
+//		assertTrue(hotelReservation.addHotel("Ridgewood", 220));
+//		assertEquals("Lakewood", hotelReservation.findCheapestHotel("10Sep2020", "11Sep2020"));
+//	}
 	@Test
 	public void whenNewHotelAddedWithWeekend_shouldReturnTrue() {
 
@@ -36,4 +36,12 @@ public class HotelReservationTest {
 
 		hotelReservationObject.printHotels();
 	}
+	@Test
+	public void whenFindCheapestHotelIsCalled_shouldReturn_nameOfHotelWithCheapestRent() {
+		HotelReservation hotelReservation = new HotelReservation();
+		assertTrue(hotelReservation.addHotel("Lakewood", 110, 90));
+		assertTrue(hotelReservation.addHotel("Bridgewood", 160, 60));
+		assertTrue(hotelReservation.addHotel("Ridgewood", 220, 150));
+		assertTrue(hotelReservation.findCheapestHotel("11Sep2020", "12Sep2020"));
+		}
 } 

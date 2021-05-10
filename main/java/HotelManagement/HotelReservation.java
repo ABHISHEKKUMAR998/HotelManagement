@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.temporal.ChronoField;
+import java.time.DayOfWeek;
 
 public class HotelReservation {
 	private static Map<String, Hotel> hotelMap;
@@ -34,7 +36,7 @@ public class HotelReservation {
 	}
 
 	
-	public String findCheapestHotel(String fromDate, String toDate) {
+	public boolean findCheapestHotel(String fromDate, String toDate) {
 		Map<Integer, ArrayList<Hotel>> rentMap = createRentMap(fromDate, toDate);
 		int minimumRent = Integer.MAX_VALUE; //Assigns max possible value
 		for (Map.Entry<Integer, ArrayList<Hotel>> entry : rentMap.entrySet()) {
@@ -42,32 +44,56 @@ public class HotelReservation {
 				minimumRent = entry.getKey();
 		}
 
-		System.out.println("Cheapest Hotel for you is " + rentMap.get(minimumRent).get(0).getHotelName());
-		System.out.println("Total Rent : " + minimumRent);
-		return rentMap.get(minimumRent).get(0).getHotelName();
+		System.out.println("Cheapest Hotel for you is : ");
+		for (Hotel hotel : rentMap.get(minimumRent)) {
+			System.out.print(hotel.getHotelName() + "  "); 			
+		}
+		System.out.println("\nTotal Rent : " + minimumRent);			
+		return true;
 	}
 
 	public static Map<Integer, ArrayList<Hotel>> createRentMap(String fromDate, String toDate) {
 		HashMap<Integer, ArrayList<Hotel>> rentMap = new HashMap<>();
-		int numOfDays = numberOfDays(fromDate, toDate);
+		int days[] = numberOfDays(fromDate, toDate);
 		for (Map.Entry<String, Hotel> entry : hotelMap.entrySet()) {
-			int rent = entry.getValue().getRegWeekdayRate() * numOfDays;
-			rentMap.computeIfAbsent(rent, k -> new ArrayList<>()).add(entry.getValue());
+			int weekdayRent = entry.getValue().getRegWeekdayRate() * days[0];
+			int weekendRent = entry.getValue().getRegWeekendRate() * days[1];
+			int totalRent = weekdayRent + weekendRent;
+
+			rentMap.computeIfAbsent(totalRent, key -> new ArrayList<>()).add(entry.getValue());
 		}
 		return rentMap;
 	}
 
-	public static int numberOfDays(String fromDate, String toDate) {
+	public static int[] numberOfDays(String fromDate, String toDate) { 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMMyyyy");
 
 		LocalDate from = LocalDate.parse(fromDate, formatter);    // convert String to LocalDate
 		LocalDate to = LocalDate.parse(toDate, formatter);		 // convert String to LocalDate
-		int numOfDays = 0;
+		int numWeekdays = 0;
+		int numWeekendDays = 0;
+		int days[];
+		days = new int[2];
 
-		for (LocalDate date = from; date.isBefore(to); date = date.plusDays(1)) {
-			numOfDays++;
+		for (LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
+			DayOfWeek day = DayOfWeek.of(date.get(ChronoField.DAY_OF_WEEK));
+			switch(day) {
+			case SATURDAY :
+				numWeekendDays++;
+				break;
+
+			case SUNDAY :
+				numWeekendDays++;
+				break;
+
+			default :
+				numWeekdays++;
+				break;
+			}
 		}
-		return numOfDays;
+		days[0] = numWeekdays;
+		days[1] = numWeekendDays;
+		return days;
 	}
 	public static void main(String[] args) {
 
