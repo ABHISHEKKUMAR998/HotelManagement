@@ -40,6 +40,26 @@ public class HotelReservation {
 			System.out.println();
 		}
 	}
+	public boolean cheapestBestRatedHotel(String fromDate, String toDate) {
+		Map<Integer, ArrayList<Hotel>> rentMap = createRentMap(fromDate, toDate);
+		int minimumRent = Integer.MAX_VALUE;
+		for (Map.Entry<Integer, ArrayList<Hotel>> entry : rentMap.entrySet()) {
+			if (entry.getKey() < minimumRent)
+				minimumRent = entry.getKey();
+		}
+		ArrayList<Hotel> cheapestHotels = rentMap.get(minimumRent);
+		String bestRatedCheapestHotel = "";
+		int rating = 0;
+		for (Hotel hotel : cheapestHotels) {
+			if (hotel.getHotelRating() > rating) {
+				bestRatedCheapestHotel = hotel.getHotelName();
+				rating = hotel.getHotelRating();
+			}
+		}
+		System.out.println("Cheapest Hotel for you is " + bestRatedCheapestHotel + " with Rating " + rating + " Total Rent : "
+				+ minimumRent + "\n");
+		return true;
+	}
 
 	
 	public boolean findCheapestHotel(String fromDate, String toDate) {
